@@ -14,24 +14,41 @@ class Traceroute:
 def main():
 
     port_number = 33434
+    ttl = 30 #TODO
 
-    # Payloud setup
+    targets_file = open('targets.txt', 'r')
+
+    targets = []
+    name = targets_file.readline().rstrip()
+
+    while name != '':
+        tuple = []
+        tuple.append(name)
+        tuple.append(socket.gethostbyname(name))
+        targets.append(tuple)
+        name = targets_file.readline().rstrip()
+
+    print(targets)
+
+    # PAYLOAD SETUP
     msg = 'measurement for class project.questions to student abc123 @ case.edu or professor mxr136 @ case.edu'
     payload = bytes(msg + 'a' * (1472 -len(msg)), 'ascii')
-    send_sock.sendto(payload, (dest_ip, dest_port))
+    send_sock.sendto(payload, (dest_ip, port_number)) #TODO change
     print('hello')
 
-    # Outbound socket setup
+    # OUTBOUND SOCKET
     outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    outbound_socket.setsockopt(socket.IPPROTO_IP, socket.IP_TTL, ttl)
 
-    ttl = 0 #TODO
-    out.setsockopt(socket.IPPROTO_IP, socket.IP_TTL, ttl)
+    # RECEIVER SOCKET
+    receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+    receiver_socket.bind('', 0)  # maybe required
 
-    # Receiver socket setup
-    recv_sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
 
-    #maybe required
-    recv.socket.bind('', 0)
+
+
+
+
     icmp_packet = recv_sock.recv(max_length_of_expected_packet)
 
 
