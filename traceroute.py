@@ -13,6 +13,8 @@ class Traceroute:
 
 def main():
 
+    port_number = 33434
+
     # Payloud setup
     msg = 'measurement for class project.questions to student abc123 @ case.edu or professor mxr136 @ case.edu'
     payload = bytes(msg + 'a' * (1472 -len(msg)), 'ascii')

@@ -1,1 +1,10 @@
-#TODO
+case.edu
+engineering.case.edu
+google.com
+linkedin.com
+github.com
+twitter.com
+instagram.com
+seznam.cz
+spotify.com
+pinterest.com
