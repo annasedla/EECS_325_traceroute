@@ -43,7 +43,7 @@ def main():
 
         # RECEIVER SOCKET
         receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-        receiver_socket.bind('', 0)  # maybe required
+        # receiver_socket.bind('', 0)  # maybe required
 
         # PAYLOAD SETUP
         msg = 'Measurement for Networks class project. ' \
