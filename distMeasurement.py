@@ -35,7 +35,7 @@ def main():
         ttl_x = 1
         num_hops = 0
 
-        destination_address = socket.gethostbyaddr(target[1])
+        # destination_address = socket.gethostbyaddr(target[1])
 
         # OUTBOUND SOCKET
         outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
