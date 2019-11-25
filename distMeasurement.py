@@ -15,7 +15,7 @@ import time
 def main():
 
     port_number = 33434
-    TTL = 30
+    TTL = 60
 
     targets_file = open('targets.txt', 'r')
 
@@ -67,18 +67,25 @@ def main():
                 break
             try:
                 rec_packet, addr = receiver_socket.recvfrom(4096)
+                icmp_header = rec_packet[20:28]
+                type, code, checksum, p_id, sequence = struct.unpack('bbHHh', icmp_header)
+                print('address: ', addr)
+                print('p id: ', p_id)
+                print('targe: ', target[1])
+
                 addr = addr[0]
             except socket.error:
                 pass
 
             num_hops = TTL - rec_packet[36]
 
-            if addr == target[1] or ttl_x > TTL:
+            if addr == target[1]:
                 break
 
-            # icmp_header = rec_packet[20:28]
+            if ttl_x > TTL:
+                break
 
-            # type, code, checksum, p_id, sequence = struct.unpack( 'bbHHh', icmp_header)
+
             # if p_id == packet_id:
             #     return time_received - time_sent
             # time_left -= time_received - time_sent
@@ -112,7 +119,8 @@ def main():
             print('Total number of router hops: ', num_hops)  # Number of router hops
             print('RTT between us and site: ', rtt)  # RTT between us and the destination
             # TODO Number of probe response matching criteria
-            print('Packet', len(rec_packet) - 28)  #TODO Number of bytes of the original datagram, might be done hihi
+            print('Packet', len(rec_packet) - 28)
+            print()
 
 
 
