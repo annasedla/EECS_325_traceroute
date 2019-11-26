@@ -59,6 +59,9 @@ def main():
                 break
             try:
                 rec_packet, addr = receiver_socket.recvfrom(4096)
+
+                print('rec_packet: ', rec_packet)
+                print('addr: ', addr)
                 # icmp_packet = receiver_socket.recv(max_length_of_expected_packet)
 
                 icmp_header = rec_packet[20:28]
