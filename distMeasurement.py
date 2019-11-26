@@ -27,15 +27,12 @@ def main():
         ttl_x = 1
         num_hops = 0
 
-        # destination_address = socket.gethostbyaddr(target[1])
-
         # OUTBOUND SOCKET
-        outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_ICMP)
         outbound_socket.setsockopt(socket.IPPROTO_IP, socket.IP_TTL, TTL)  # as the instructions suggested
 
         # RECEIVER SOCKET
         receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-        # receiver_socket.bind('', 0)  # maybe required
 
         # PAYLOAD SETUP
         msg = 'Measurement for Networks class project. ' \
@@ -46,7 +43,8 @@ def main():
         # Begin measuring time to send packets
         started_select = time.time()
 
-        # With the policy of the project the following code is adapted from https://gist.github.com/pklaus/856268
+        # With the policy of the project the following
+        # portions of the code are adapted from https://gist.github.com/pklaus/856268
         while True:
             rec_packet = []
             addr = []
@@ -58,20 +56,23 @@ def main():
             if ready[0] == []:  # Timeout
                 break
             try:
-                rec_packet, addr = receiver_socket.recvfrom(4096)
+                rec_packet, addr = receiver_socket.recvfrom(4096)  # Receive from this port
 
-                print('rec_packet: ', rec_packet)
-                print('addr: ', addr)
                 # icmp_packet = receiver_socket.recv(max_length_of_expected_packet)
 
                 icmp_header = rec_packet[20:28]
+                ip = rec_packet[0:20]
+                print('maybe the ip: ', ip)
                 #TODO first 20 IP, 8 byters imcp, 20 bytes next our own IP coming back, 8 bytes of UDP header bouncing back
                 type, code, checksum, p_id, sequence = struct.unpack('bbHHh', icmp_header)
                 # port_from_packet = struct.unpack("!H", packet[x:x + 2])[0]
 
                 print('address: ', addr)
                 print('p id: ', p_id)
-                print('targe: ', target[1])
+                print('type: ', type)
+                print('code: ', code)
+                print('sequence: ', sequence)
+                print('checksum: ', checksum)
 
                 addr = addr[0]
             except socket.error:
