@@ -1,16 +1,8 @@
-import sys
 import socket
 import struct
 import select
 import time
 
-
-# My project specification lists IP_ID as one of the three  criteria for matching probe with the response.
-# Jared Cassarly found (kudos to him!) that setsockopt does not allow you to set this option,
-# so you can't control which IP_ID to use for the probe.
-# Barring that, the only alternative is to use IP_HDRINCL socket option to prevent the IP layer from populating
-# the IP header for you, and then to fill out the entire header, both IP and UDP fields. But to make things simpler,
-# just use the two remaining criteria (IP addresses and port numbers).
 
 def main():
 
@@ -48,7 +40,7 @@ def main():
         # PAYLOAD SETUP
         msg = 'Measurement for Networks class project. ' \
               'Questions to student axs1202@case.edu or professor mxr136@case.edu'
-        payload = bytes(msg + 'a' * (1472 -len(msg)), 'ascii')
+        payload = bytes(msg + 'a' * (1472 - len(msg)), 'ascii')
         outbound_socket.sendto(payload, (target[1], port_number))
 
         # Begin measuring time to send packets
@@ -67,8 +59,13 @@ def main():
                 break
             try:
                 rec_packet, addr = receiver_socket.recvfrom(4096)
+                # icmp_packet = receiver_socket.recv(max_length_of_expected_packet)
+
                 icmp_header = rec_packet[20:28]
+                #TODO first 20 IP, 8 byters imcp, 20 bytes next our own IP coming back, 8 bytes of UDP header bouncing back
                 type, code, checksum, p_id, sequence = struct.unpack('bbHHh', icmp_header)
+                # port_from_packet = struct.unpack("!H", packet[x:x + 2])[0]
+
                 print('address: ', addr)
                 print('p id: ', p_id)
                 print('targe: ', target[1])
@@ -79,30 +76,20 @@ def main():
 
             num_hops = TTL - rec_packet[36]
 
+            # METHOD 1 maybe?
             if addr == target[1]:
                 break
 
+            # METHODS 3
+
             if ttl_x > TTL:
                 break
-
 
             # if p_id == packet_id:
             #     return time_received - time_sent
             # time_left -= time_received - time_sent
             # if time_left <= 0:
             #     break
-
-        # TODO what to do with this
-        # icmp_packet = receiver_socket.recv(max_length_of_expected_packet)
-        #
-        # # unpack packages
-        # port_from_packet = struct.unpack("!H", packet[x:x + 2])[0]
-
-        # METHOD 1
-
-        # METHOD 2
-
-        # METHODS 3
 
         # Close both sockets
         outbound_socket.close()
@@ -121,7 +108,6 @@ def main():
             # TODO Number of probe response matching criteria
             print('Packet', len(rec_packet) - 28)
             print()
-
 
 
 if __name__ == "__main__":
