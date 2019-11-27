@@ -56,9 +56,7 @@ def main():
             if ready[0] == []:  # Timeout
                 break
             try:
-                rec_packet, addr = receiver_socket.recvfrom(4096)  # Receive from this port
                 imcp_packet = receiver_socket.recv(1528)
-
                 srcIp = str(imcp_packet[40]) + "." + str(imcp_packet[41]) + "." +\
                         str(imcp_packet[42]) + "." + str(imcp_packet[43])
 
@@ -66,6 +64,8 @@ def main():
 
                 print('ip, try two: ', srcIp)
                 print('port, try two', port_from_packet)
+
+                rec_packet, addr = receiver_socket.recvfrom(4096)  # Receive from this port
 
                 icmp_header = rec_packet[20:28]
                 ip = rec_packet[0:20]
