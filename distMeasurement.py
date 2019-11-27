@@ -28,7 +28,7 @@ def main():
         num_hops = 0
 
         # OUTBOUND SOCKET
-        outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_ICMP)
+        outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         outbound_socket.setsockopt(socket.IPPROTO_IP, socket.IP_TTL, TTL)  # as the instructions suggested
 
         # RECEIVER SOCKET
@@ -56,12 +56,15 @@ def main():
             if ready[0] == []:  # Timeout
                 break
             try:
-                rec_packet, addr = receiver_socket.recvfrom(4096)  # Receive from this port
+                rec_packet, addr = receiver_socket.recvfrom(1024)  # Receive from this port
 
                 # icmp_packet = receiver_socket.recv(max_length_of_expected_packet)
 
                 icmp_header = rec_packet[20:28]
                 ip = rec_packet[0:20]
+
+                print('NEW MEASUREMENT:')
+                print('size of received packet: ', len(rec_packet))
                 print('maybe the ip: ', ip)
                 #TODO first 20 IP, 8 byters imcp, 20 bytes next our own IP coming back, 8 bytes of UDP header bouncing back
                 type, code, checksum, p_id, sequence = struct.unpack('bbHHh', icmp_header)
