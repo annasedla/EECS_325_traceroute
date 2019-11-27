@@ -28,7 +28,7 @@ def main():
         num_hops = 0
 
         # OUTBOUND SOCKET
-        outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_ICMP)
+        outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         outbound_socket.setsockopt(socket.IPPROTO_IP, socket.IP_TTL, TTL)  # as the instructions suggested
 
         # RECEIVER SOCKET
@@ -57,15 +57,22 @@ def main():
                 break
             try:
                 rec_packet, addr = receiver_socket.recvfrom(4096)  # Receive from this port
+                imcp_packet = receiver_socket.recv(1528)
 
-                # icmp_packet = receiver_socket.recv(max_length_of_expected_packet)
+                srcIp = str(imcp_packet[40]) + "." + str(imcp_packet[41]) + "." +\
+                        str(imcp_packet[42]) + "." + str(imcp_packet[43])
+
+                port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]
+
+                print('ip, try two: ', srcIp)
+                print('port, try two', port_from_packet)
 
                 icmp_header = rec_packet[20:28]
                 ip = rec_packet[0:20]
                 print('maybe the ip: ', ip)
+
                 #TODO first 20 IP, 8 byters imcp, 20 bytes next our own IP coming back, 8 bytes of UDP header bouncing back
                 type, code, checksum, p_id, sequence = struct.unpack('bbHHh', icmp_header)
-                # port_from_packet = struct.unpack("!H", packet[x:x + 2])[0]
 
                 print('address: ', addr)
                 print('p id: ', p_id)
