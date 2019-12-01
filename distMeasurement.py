@@ -63,17 +63,13 @@ def main():
                 break
             try:
                 imcp_packet = receiver_socket.recv(max_packet_lenght)
-                srcIp = str(imcp_packet[40]) + "." + str(imcp_packet[41]) + "." +\
-                        str(imcp_packet[42]) + "." + str(imcp_packet[43])
 
-                # ip = struct.unpack("<L", imcp_packet[0:20])
                 ip = str(imcp_packet[12]) + "." + str(imcp_packet[13]) + "." +\
                         str(imcp_packet[14]) + "." + str(imcp_packet[15])
 
                 port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]  # as per instructions
 
-                print('IP address: ', srcIp)
-                print('ip, take two: ', ip)
+                print('IP: ', ip)
                 print('Requested IP address: ', target[1])
                 print('Port: ', port_from_packet)
                 print('Packet size: ', len(imcp_packet))
@@ -84,7 +80,7 @@ def main():
             num_hops = TTL - imcp_packet[36]
 
             # METHOD 1
-            if srcIp == target[1]:
+            if ip == target[1]:
                 probe_response_matching.append('IP addresses match')
 
             # METHODS 3
