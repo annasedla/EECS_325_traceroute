@@ -25,7 +25,7 @@ def main():
     print(targets)
 
     for target in targets:
-        ttl_x = 1
+
         num_hops = 0
         probe_response_matching = []
 
@@ -89,34 +89,6 @@ def main():
             if len(probe_response_matching) > 0:
                 break
 
-                # rec_packet, addr = receiver_socket.recvfrom(4096)  # Receive from this port
-                #
-                # icmp_header = rec_packet[20:28]
-                # ip = rec_packet[0:20]
-                #
-                # print('NEW MEASUREMENT:')
-                # print('size of received packet: ', len(rec_packet))
-                # print('maybe the ip: ', ip)
-                #
-                # #first 20 IP, 8 byters imcp, 20 bytes next our own IP coming back, 8 bytes of UDP header bouncing back
-                # type, code, checksum, p_id, sequence = struct.unpack('bbHHh', icmp_header)
-                #
-                # print('address: ', addr)
-                # print('p id: ', p_id)
-                # print('type: ', type)
-                # print('code: ', code)
-                # print('sequence: ', sequence)
-                # print('checksum: ', checksum)
-                #
-                # addr = addr[0]
-
-            #
-            # if addr == target[1]:
-            #     break
-            # # exit if ttl of the outbound socket exceeds the TTL constant TODO i believe this is wrong
-            # if ttl_x > TTL:
-            #     break
-
         # Close both sockets
         outbound_socket.close()
         receiver_socket.close()
@@ -125,7 +97,7 @@ def main():
         print('Traceroute finished for site: ', target[0])
         print('Total number of router hops: ', num_hops)  # Number of router hops
         print('RTT between us and site: ', rtt)  # RTT between us and the destination
-        print('Number of probe response mathcing criteria: ,', probe_response_matching)
+        print('Number of probe response mathcing criteria: ', probe_response_matching)
         print('Packet size: ', len(imcp_packet) - 28)  # need to subtract the header
         print()
 
