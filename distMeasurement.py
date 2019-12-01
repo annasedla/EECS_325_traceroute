@@ -53,7 +53,7 @@ def main():
 
             srcIp = 0
             port_from_packet = 0
-            imcp_packet = 0
+            imcp_packet = ""
 
             # Decided to use select on the socket so we are not probing forever
             ready = select.select([receiver_socket], [], [], 3)  # inputs, outputs, inputs, timeout
