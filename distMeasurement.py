@@ -62,13 +62,14 @@ def main():
             if ready[0] == []:  # Timeout set to 3 seconds, TODO maybe try few more times
                 break
             try:
-                imcp_packet = receiver_socket.recv(max_packet_lenght)
+                imcp_packet, addr = receiver_socket.recv(max_packet_lenght)
                 srcIp = str(imcp_packet[40]) + "." + str(imcp_packet[41]) + "." +\
                         str(imcp_packet[42]) + "." + str(imcp_packet[43])
 
                 port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]  # as per instructions
 
                 print('IP address: ', srcIp)
+                print('IP address, take two: ', addr)
                 print('Requested IP address: ', target[1])
                 print('Port: ', port_from_packet)
                 print('Packet size: ', len(imcp_packet))
