@@ -68,8 +68,10 @@ def main():
 
                 port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]  # as per instructions
 
-                print('ip, try two: ', srcIp)
-                print('port, try two', port_from_packet)
+                print('IP address: ', srcIp)
+                print('Requested IP address: ', target[1])
+                print('Port: ', port_from_packet)
+                print('Packet size: ', len(imcp_packet))
 
             except socket.error:
                 pass
