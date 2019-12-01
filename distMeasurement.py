@@ -8,6 +8,8 @@ def main():
 
     port_number = 33434
     max_packet_lenght = 1528
+    packet_length_without_header = 1472
+    header = 28
     TTL = 60
 
     targets_file = open('targets.txt', 'r')
@@ -39,7 +41,7 @@ def main():
         # PAYLOAD SETUP
         msg = 'Measurement for Networks class project. ' \
               'Questions to student axs1202@case.edu or professor mxr136@case.edu'
-        payload = bytes(msg + 'a' * (1472 - len(msg)), 'ascii')
+        payload = bytes(msg + 'a' * (packet_length_without_header - len(msg)), 'ascii')
         outbound_socket.sendto(payload, (target[1], port_number))
 
         # Begin measuring time to send packets
@@ -48,12 +50,9 @@ def main():
         # With the policy of the project the following
         # portions of the code are adapted from https://gist.github.com/pklaus/856268
         while True:
-            # rec_packet = []
-            # addr = []
-
-            srcIp = 0
             port_from_packet = 0
             imcp_packet = ""
+            ip = 0
 
             # Decided to use select on the socket so we are not probing forever
             ready = select.select([receiver_socket], [], [], 3)  # inputs, outputs, inputs, timeout
@@ -68,10 +67,12 @@ def main():
                         str(imcp_packet[14]) + "." + str(imcp_packet[15])
 
                 port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]  # as per instructions
+                port_from_packet_2 = struct.unpack("!H", imcp_packet[22:24])[0]  # as per instructions
 
                 print('IP: ', ip)
                 print('Requested IP address: ', target[1])
                 print('Port: ', port_from_packet)
+                print('Port: ', port_from_packet_2)
                 print('Packet size: ', len(imcp_packet))
 
             except socket.error:
@@ -99,7 +100,7 @@ def main():
         print('Total number of router hops: ', num_hops)  # Number of router hops
         print('RTT between us and site: ', rtt)  # RTT between us and the destination
         print('Number of probe response mathcing criteria: ', probe_response_matching)
-        print('Packet size: ', len(imcp_packet) - 28)  # need to subtract the header
+        print('Packet size: ', len(imcp_packet) - header)  # need to subtract the header
         print()
 
 
