@@ -66,7 +66,7 @@ def main():
                 srcIp = str(imcp_packet[40]) + "." + str(imcp_packet[41]) + "." +\
                         str(imcp_packet[42]) + "." + str(imcp_packet[43])
 
-                ip = str(imcp_packet[0:20])
+                ip = struct.unpack("<L", imcp_packet[0:20])
 
                 port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]  # as per instructions
 
