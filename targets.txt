@@ -7,7 +7,6 @@ facebook.com
 spotify.com
 youtube.com
 yahoo.com
-reddit.com
-instagram.com
-seznam.cz
-bing.com
+twitter.com
+stackoverflow.com
+ebay.com
