@@ -3,9 +3,6 @@ import struct
 import select
 import time
 
-# TODO comment more
-#TODO <home-directory>/project2”
-# TODO <home-directory>/project2grading
 
 def main():
 
@@ -18,21 +15,21 @@ def main():
 
     targets_file = open('targets.txt', 'r')
 
-    targets = []
+    targets = []  # list of sites to probe
     name = targets_file.readline().rstrip()
 
-
+    # Each target is a tuple with site name and the corresponding IP address
     while name != '':
-        tuple = []
-        tuple.append(name)
-        tuple.append(socket.gethostbyname(name))
-        targets.append(tuple)
+        target_tuple = []
+        target_tuple.append(name)
+        target_tuple.append(socket.gethostbyname(name))
+        targets.append(target_tuple)
         name = targets_file.readline().rstrip()
 
     for target in targets:
 
         num_hops = 0
-        probe_response_matching = []
+        probe_response_matching = []  # number of response matching criteria detected as per instructions
 
         # OUTBOUND SOCKET
         outbound_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -44,14 +41,14 @@ def main():
         # PAYLOAD SETUP
         msg = 'Measurement for Networks class project. ' \
               'Questions to student axs1202@case.edu or professor mxr136@case.edu'
-        payload = bytes(msg + 'a' * (packet_length_without_header - len(msg)), 'ascii')
+        payload = bytes(msg + 'a' * (packet_length_without_header - len(msg)), 'ascii')  # as the instructions suggested
         outbound_socket.sendto(payload, (target[1], port_number))
 
         # Begin measuring time to send packets
         started_select = time.time()
 
         # With the policy of the project the following
-        # portions of the code are adapted from https://gist.github.com/pklaus/856268
+        # portions of the code are inspired by https://gist.github.com/pklaus/856268
         while True:
             port_from_packet = 0
             imcp_packet = ""
@@ -61,36 +58,34 @@ def main():
             # Decided to use select on the socket so we are not probing forever
             ready = select.select([receiver_socket], [], [], 3)  # inputs, outputs, inputs, timeout
 
+            # Stop measuring as soon as we get a response or timeout
             rtt = time.time() - started_select
-            if ready[0] == []:  # Timeout set to 3 seconds, TODO maybe try few more times, if not produce error message
+
+            if ready[0] == []:
                 print("Error, site timed out.")
                 time_out = True
                 break
+
             try:
-                imcp_packet = receiver_socket.recv(max_packet_length)
+                imcp_packet = receiver_socket.recv(max_packet_length)  # as the instructions suggested
 
-                ip = str(imcp_packet[12]) + "." + str(imcp_packet[13]) + "." +\
-                        str(imcp_packet[14]) + "." + str(imcp_packet[15])
+                # The IP address that the IMCP packet originated from
+                ip = str(imcp_packet[12])\
+                     + "." + str(imcp_packet[13]) + "." + str(imcp_packet[14]) + "." + str(imcp_packet[15])
 
+                # The port of UDP originator
                 port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]  # as per instructions
-                port_from_packet_2 = struct.unpack("!H", imcp_packet[22:24])[0]  # as per instructions
-
-                # print('IP: ', ip)
-                # print('Requested IP address: ', target[1])
-                # print('Port: ', port_from_packet)
-                # print('Port: ', port_from_packet_2)
-                # print('Packet size: ', len(imcp_packet))
 
             except socket.error:
                 pass
 
-            num_hops = TTL - imcp_packet[36]
+            num_hops = TTL - imcp_packet[36]  # number of hops for the target
 
-            # METHOD 1
+            # METHOD 1: compare IP address of the target vs originator of the error message
             if ip == target[1]:
                 probe_response_matching.append('IP addresses match')
 
-            # METHODS 3
+            # METHODS 3:  compare the sockets
             if port_from_packet == port_number:
                 probe_response_matching.append('Port numbers match')
 
