@@ -3,11 +3,15 @@ import struct
 import select
 import time
 
+# TODO comment more
+#TODO <home-directory>/project2”
+# TODO <home-directory>/project2grading
 
 def main():
 
+    # Setting up all necessary constants
     port_number = 33434
-    max_packet_lenght = 1528
+    max_packet_length = 1528
     packet_length_without_header = 1472
     header = 28
     TTL = 60
@@ -17,14 +21,13 @@ def main():
     targets = []
     name = targets_file.readline().rstrip()
 
+
     while name != '':
         tuple = []
         tuple.append(name)
         tuple.append(socket.gethostbyname(name))
         targets.append(tuple)
         name = targets_file.readline().rstrip()
-
-    print(targets)
 
     for target in targets:
 
@@ -53,15 +56,18 @@ def main():
             port_from_packet = 0
             imcp_packet = ""
             ip = 0
+            time_out = False
 
             # Decided to use select on the socket so we are not probing forever
             ready = select.select([receiver_socket], [], [], 3)  # inputs, outputs, inputs, timeout
 
             rtt = time.time() - started_select
-            if ready[0] == []:  # Timeout set to 3 seconds, TODO maybe try few more times
+            if ready[0] == []:  # Timeout set to 3 seconds, TODO maybe try few more times, if not produce error message
+                print("Error, site timed out.")
+                time_out = True
                 break
             try:
-                imcp_packet = receiver_socket.recv(max_packet_lenght)
+                imcp_packet = receiver_socket.recv(max_packet_length)
 
                 ip = str(imcp_packet[12]) + "." + str(imcp_packet[13]) + "." +\
                         str(imcp_packet[14]) + "." + str(imcp_packet[15])
@@ -96,12 +102,15 @@ def main():
         receiver_socket.close()
 
         # OUTPUT
-        print('Traceroute finished for site: ', target[0])
-        print('Total number of router hops: ', num_hops)  # Number of router hops
-        print('RTT between us and site: ', rtt)  # RTT between us and the destination
-        print('Number of probe response mathcing criteria: ', probe_response_matching)
-        print('Packet size: ', len(imcp_packet) - header)  # need to subtract the header
-        print()
+        if time_out:
+            print("This website, ", target[0], " did not respond. Moving on.")
+        else:
+            print('Traceroute finished for site: ', target[0])
+            print('Total number of router hops: ', num_hops)  # Number of router hops
+            print('RTT between us and site: ', rtt)  # RTT between us and the destination
+            print('Number of probe response mathcing criteria: ', probe_response_matching)
+            print('Packet size: ', len(imcp_packet) - header)  # need to subtract the header
+            print()
 
 
 if __name__ == "__main__":
