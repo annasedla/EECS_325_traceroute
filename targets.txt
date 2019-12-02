@@ -9,4 +9,3 @@ youtube.com
 yahoo.com
 twitter.com
 gmail.com
-adobe.com
