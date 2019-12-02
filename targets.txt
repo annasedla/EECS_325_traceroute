@@ -8,6 +8,5 @@ spotify.com
 youtube.com
 yahoo.com
 twitter.com
-imdb.com
 gmail.com
 adobe.com

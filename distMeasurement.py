@@ -75,11 +75,11 @@ def main():
                 port_from_packet = struct.unpack("!H", imcp_packet[50:52])[0]  # as per instructions
                 port_from_packet_2 = struct.unpack("!H", imcp_packet[22:24])[0]  # as per instructions
 
-                print('IP: ', ip)
-                print('Requested IP address: ', target[1])
-                print('Port: ', port_from_packet)
-                print('Port: ', port_from_packet_2)
-                print('Packet size: ', len(imcp_packet))
+                # print('IP: ', ip)
+                # print('Requested IP address: ', target[1])
+                # print('Port: ', port_from_packet)
+                # print('Port: ', port_from_packet_2)
+                # print('Packet size: ', len(imcp_packet))
 
             except socket.error:
                 pass
@@ -108,7 +108,7 @@ def main():
             print('Traceroute finished for site: ', target[0])
             print('Total number of router hops: ', num_hops)  # Number of router hops
             print('RTT between us and site: ', rtt)  # RTT between us and the destination
-            print('Number of probe response mathcing criteria: ', probe_response_matching)
+            print('Number of probe response matching criteria: ', probe_response_matching)
             print('Packet size: ', len(imcp_packet) - header)  # need to subtract the header
             print()
 
